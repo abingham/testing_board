@@ -1,0 +1,32 @@
+# -*- restclient -*-
+#
+# Gets  all Github APIs, formats JSON, shows response status and headers underneath.
+# Also sends a User-Agent header, because the Github API requires this.
+#
+GET http://127.0.0.1:8080/
+User-Agent: Emacs Restclient
+
+#
+# Post works too, entity just goes after an empty line. Same is for PUT.
+#
+POST http://127.0.0.1:8080/results/0/1
+User-Agent: Emacs Restclient
+Content-Type: application/json
+
+{
+    "results" : { "total": 10, "failures": 5 }
+}
+
+#
+# Gets  all Github APIs, formats JSON, shows response status and headers underneath.
+# Also sends a User-Agent header, because the Github API requires this.
+#
+GET http://127.0.0.1:8080/
+User-Agent: Emacs Restclient
+
+#
+# Gets  all Github APIs, formats JSON, shows response status and headers underneath.
+# Also sends a User-Agent header, because the Github API requires this.
+#
+GET http://127.0.0.1:8080/results/0
+User-Agent: Emacs Restclient
