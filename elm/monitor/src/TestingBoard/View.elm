@@ -1,10 +1,10 @@
 module TestingBoard.View exposing (view)
 
+import Chart
 import Dict
 import TestingBoard.Model as Model
 import TestingBoard.Msg as Msg
 import TestingBoard.Routing as Routing
-import TestingBoard.Types as Types
 
 
 -- import TestingBoard.Types as Types
@@ -60,13 +60,26 @@ footer =
         }
 
 
-scoreView : Types.PlayerId -> Types.Score -> Html Msg.Msg
-scoreView uid score =
+bucket : Model.Model -> Float -> Float -> (Float, String)
+bucket model bottom top =
     let
-        sz =
-            uid ++ " -> " ++ (toString score.failures) ++ " / " ++ (toString score.total)
+        rate s = 1.0 - (toFloat s.failures) / (toFloat s.total)
+        inBucket r = (r > bottom) && (r <= top)
+        matches = List.filter inBucket (Dict.values model.scores |> List.map rate)
     in
-        text sz
+        (List.length matches |> toFloat, toString top)
+
+
+histogram : Model.Model -> Html Msg.Msg
+histogram model =
+    let
+        tops = [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]
+        bottoms = 0.0 :: tops
+        buckets = List.map2 (bucket model) bottoms tops
+    in
+        Chart.vBar buckets
+        |> Chart.title "% passing tests"
+        |> Chart.toHtml
 
 
 view : Model.Model -> Html Msg.Msg
@@ -75,9 +88,7 @@ view model =
         main =
             case model.location of
                 Routing.Index ->
-                    div [] <|
-                        List.map (\( k, v ) -> div [] [scoreView k v]) <|
-                            Dict.toList model.scores
+                    histogram model
 
                 -- Routing.DeepLink id ->
                 --     text "deep link!"
@@ -93,13 +104,10 @@ view model =
                 { header =
                     [ Layout.row
                         [ Color.background Color.primary ]
-                        [ Layout.title
-                            [ Typo.title, Typo.left ]
-                            [ text "monitor" ]
-                        , Layout.spacer
+                        [  Layout.spacer
                         , Layout.title
                             [ Typo.title ]
-                            [ text "monitor" ]
+                            [ text "Testing Leaderboard" ]
                         , Layout.spacer
                         ]
                     ]
