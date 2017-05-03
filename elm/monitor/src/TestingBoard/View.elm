@@ -59,27 +59,43 @@ footer =
                 ]
         }
 
-
-bucket : Model.Model -> Float -> Float -> (Float, String)
+{-| Calculate a single bucket in the histogram.
+-}
+bucket : Model.Model -> Float -> Float -> ( Float, String )
 bucket model bottom top =
     let
-        rate s = 1.0 - (toFloat s.failures) / (toFloat s.total)
-        inBucket r = (r > bottom) && (r <= top)
-        matches = List.filter inBucket (Dict.values model.scores |> List.map rate)
+        rate s =
+            1.0 - (toFloat s.failures) / (toFloat s.total)
+
+        rates = Dict.values model.scores |> List.map rate
+
+        inBucket r =
+            (r > bottom) && (r <= top)
+
+        matches =
+            List.filter inBucket rates
     in
-        (List.length matches |> toFloat, toString top)
+        ( List.length matches |> toFloat, toString top )
 
-
-histogram : Model.Model -> Html Msg.Msg
-histogram model =
+{-| Render a histogram of passing rates for the scores.
+-}
+histogram : Int -> Model.Model -> Html Msg.Msg
+histogram numBins model =
     let
-        tops = [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]
-        bottoms = 0.0 :: tops
-        buckets = List.map2 (bucket model) bottoms tops
+        tops =
+            List.range 1 numBins
+                |> List.map toFloat
+                |> List.map (\x -> x / (toFloat numBins))
+
+        bottoms =
+            0.0 :: tops
+
+        buckets =
+            List.map2 (bucket model) bottoms tops
     in
         Chart.vBar buckets
-        |> Chart.title "% passing tests"
-        |> Chart.toHtml
+            |> Chart.title "% passing tests"
+            |> Chart.toHtml
 
 
 view : Model.Model -> Html Msg.Msg
@@ -88,7 +104,7 @@ view model =
         main =
             case model.location of
                 Routing.Index ->
-                    histogram model
+                    histogram 10 model
 
                 -- Routing.DeepLink id ->
                 --     text "deep link!"
@@ -104,7 +120,7 @@ view model =
                 { header =
                     [ Layout.row
                         [ Color.background Color.primary ]
-                        [  Layout.spacer
+                        [ Layout.spacer
                         , Layout.title
                             [ Typo.title ]
                             [ text "Testing Leaderboard" ]
