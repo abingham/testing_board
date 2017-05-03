@@ -1,8 +1,10 @@
 from aiohttp import web
 import aiohttp_cors
+import asyncio
 from collections import defaultdict
 
 games = defaultdict(lambda: defaultdict(list))
+q = asyncio.Queue()
 
 
 async def handle_games(request):
@@ -19,6 +21,9 @@ async def handle_add_results(request):
         'total': results['total'],
         'failures': results['failures'],
     }
+
+    await q.put(b'new data')
+
     return web.Response()
 
 
@@ -28,11 +33,29 @@ async def handle_get_results(request):
     return web.json_response(dict(games[game_id]))
 
 
+async def handle_data_socket(request):
+    ws = web.WebSocketResponse()
+    await ws.prepare(request)
+
+    while True:
+        msg = await q.get()
+
+        # or done, pending = await asyncio.wait([q.get(), ws.receive()], return_when=asyncio.FIRST_COMPLETED)
+        if msg is None:
+            break
+        else:
+            ws.send_bytes(msg)
+
+    await ws.close()
+    return ws
+
+
 def main():
     app = web.Application()
     cors = aiohttp_cors.setup(app)
     app.router.add_get('/', handle_games)
     app.router.add_post('/results/{game_id}', handle_add_results)
+    app.router.add_get('/data_socket', handle_data_socket)
 
     resource = cors.add(app.router.add_resource("/results/{game_id}/"))
     cors.add(
