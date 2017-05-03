@@ -22,7 +22,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     batch
         [ Material.subscriptions Mdl model
-        , WebSocket.listen "ws://localhost:8080/data_socket" NewDataAvailable
+        , WebSocket.listen "ws://localhost:8080/notifications" NewScoresAvailable
         ]
 
 

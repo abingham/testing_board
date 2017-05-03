@@ -13,7 +13,7 @@ update msg model =
         Msg.ScoresFetched (Ok scores) ->
             { model | scores = scores } ! []
 
-        Msg.NewDataAvailable _ ->
+        Msg.NewScoresAvailable _ ->
             model ! [Comms.fetchScores model]
 
         Msg.UrlChange location ->

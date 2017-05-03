@@ -12,7 +12,6 @@ async def handle_games(request):
 
 
 async def handle_add_results(request):
-    print(request.match_info)
     game_id = request.match_info['game_id']
     data = await request.json()
     results = data['results']
@@ -28,12 +27,11 @@ async def handle_add_results(request):
 
 
 async def handle_get_results(request):
-    print(request.match_info)
     game_id = request.match_info['game_id']
     return web.json_response(dict(games[game_id]))
 
 
-async def handle_data_socket(request):
+async def handle_notifications(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
@@ -55,7 +53,7 @@ def main():
     cors = aiohttp_cors.setup(app)
     app.router.add_get('/', handle_games)
     app.router.add_post('/results/{game_id}', handle_add_results)
-    app.router.add_get('/data_socket', handle_data_socket)
+    app.router.add_get('/notifications', handle_notifications)
 
     resource = cors.add(app.router.add_resource("/results/{game_id}/"))
     cors.add(
