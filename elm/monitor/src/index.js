@@ -11,7 +11,8 @@ var Elm = require('./Main.elm');
 var mountNode = document.getElementById('main');
 
 var flags = {
-    gameId: process.env.GAME_ID
+    gameId: process.env.GAME_ID,
+    apiRootUrl: process.env.API_ROOT_URL
 };
 
 setTimeout(function() {

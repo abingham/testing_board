@@ -14,6 +14,7 @@ import Time
 
 type alias Flags =
     { gameId : Types.GameId
+    , apiRootUrl : String
     }
 
 
@@ -30,10 +31,13 @@ main =
     Navigation.programWithFlags UrlChange
         { init =
             \flags loc ->
-                ( initialModel flags.gameId loc
+              let
+                  model = initialModel flags.apiRootUrl flags.gameId loc
+              in
+                ( model
                 , Cmd.batch
                     [ Material.init Mdl
-                    , Comms.fetchScores flags.gameId
+                    , Comms.fetchScores model
                     ]
                 )
         , view = view

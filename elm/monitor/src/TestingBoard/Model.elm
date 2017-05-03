@@ -12,15 +12,17 @@ import Navigation
 
 type alias Model =
     { gameId : Types.GameId
+    , apiRootUrl : String
     , scores : Types.Scores
     , mdl : Material.Model
     , location : Routing.RoutePath
     }
 
 
-initialModel : Types.GameId -> Navigation.Location -> Model
-initialModel gameId location =
+initialModel : String -> Types.GameId -> Navigation.Location -> Model
+initialModel apiRootUrl gameId location =
     { gameId = gameId
+    , apiRootUrl = apiRootUrl
     , scores = Dict.empty
     , location = Routing.parseLocation location
     , mdl = Material.model

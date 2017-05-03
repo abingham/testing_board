@@ -53,7 +53,7 @@ module.exports = {
               to:   'static/img/'
           },
       ]),
-      new webpack.EnvironmentPlugin(["GAME_ID"])
+      new webpack.EnvironmentPlugin(["API_ROOT_URL", "GAME_ID"])
   ],
 
   devServer: {

@@ -14,7 +14,7 @@ update msg model =
             { model | scores = scores } ! []
 
         Msg.Refresh ->
-            model ! [Comms.fetchScores model.gameId]
+            model ! [Comms.fetchScores model]
 
         Msg.UrlChange location ->
             { model | location = Routing.parseLocation location } ! []
