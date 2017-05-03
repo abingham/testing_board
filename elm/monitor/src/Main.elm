@@ -9,7 +9,7 @@ import TestingBoard.View exposing (view)
 import Material
 import Navigation
 import Platform.Sub exposing (batch)
-import Time
+import WebSocket
 
 
 type alias Flags =
@@ -21,8 +21,8 @@ type alias Flags =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     batch
-        [ Time.every Time.second (\_ -> Refresh)
-        , Material.subscriptions Mdl model
+        [ Material.subscriptions Mdl model
+        , WebSocket.listen "ws://localhost:8080/data_socket" NewDataAvailable
         ]
 
 
@@ -31,15 +31,16 @@ main =
     Navigation.programWithFlags UrlChange
         { init =
             \flags loc ->
-              let
-                  model = initialModel flags.apiRootUrl flags.gameId loc
-              in
-                ( model
-                , Cmd.batch
-                    [ Material.init Mdl
-                    , Comms.fetchScores model
-                    ]
-                )
+                let
+                    model =
+                        initialModel flags.apiRootUrl flags.gameId loc
+                in
+                    ( model
+                    , Cmd.batch
+                        [ Material.init Mdl
+                        , Comms.fetchScores model
+                        ]
+                    )
         , view = view
         , update = update
         , subscriptions = subscriptions

@@ -8,6 +8,6 @@ import Navigation
 
 type Msg
     = ScoresFetched (Result Http.Error Types.Scores)
-    | Refresh
+    | NewDataAvailable String
     | Mdl (Material.Msg Msg)
     | UrlChange Navigation.Location
