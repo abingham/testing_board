@@ -26,6 +26,7 @@ long_description = read('README.md', mode='rt')
 
 INSTALL_REQUIRES = [
     'aiohttp',
+    'aiohttp-cors',
 ]
 
 setup(
