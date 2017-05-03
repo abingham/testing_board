@@ -34,7 +34,7 @@ def main():
     app.router.add_get('/', handle_games)
     app.router.add_post('/results/{game_id}', handle_add_results)
 
-    resource = cors.add(app.router.add_resource("/results/{game_id}"))
+    resource = cors.add(app.router.add_resource("/results/{game_id}/"))
     cors.add(
         resource.add_route('GET', handle_get_results), {
             "*":

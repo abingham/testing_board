@@ -6,16 +6,19 @@ module TestingBoard.Comms exposing (..)
 @docs TODO
 -}
 
+import Erl
+import Http
 import TestingBoard.Json as Json
 import TestingBoard.Model as Model
 import TestingBoard.Msg as Msg
-import Http
 
 
 fetchScores : Model.Model -> Cmd Msg.Msg
 fetchScores model =
     let
-        url = model.apiRootUrl ++ "results/" ++ model.gameId
+        base_url = Erl.parse model.apiRootUrl
+        url = {base_url | path = base_url.path ++ ["results", model.gameId]}
+              |> Erl.toString
         request =
             Http.get url Json.scoresDecoder
     in
