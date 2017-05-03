@@ -1,5 +1,6 @@
 module TestingBoard.Update exposing (update)
 
+import TestingBoard.Comms as Comms
 import TestingBoard.Msg as Msg
 import TestingBoard.Model exposing (Model)
 import TestingBoard.Routing as Routing
@@ -11,6 +12,9 @@ update msg model =
     case msg of
         Msg.ScoresFetched (Ok scores) ->
             { model | scores = scores } ! []
+
+        Msg.Refresh ->
+            model ! [Comms.fetchScores model.gameId]
 
         Msg.UrlChange location ->
             { model | location = Routing.parseLocation location } ! []
