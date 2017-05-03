@@ -3,7 +3,7 @@ import http.client
 import json
 
 failures = 0
-count = 0
+total = 0
 
 
 def pytest_addoption(parser):
@@ -19,34 +19,35 @@ def pytest_addoption(parser):
     parser.addoption("--testing_board:game",
                      action="store",
                      type=int,
+                     default=0,
                      help="game id")
     parser.addoption("--testing_board:user",
                      action="store",
-                     type=int,
                      help="user id")
 
 
 def pytest_runtest_logreport(report):
-    global count
+    global total
     global failures
     if report.when == 'call':
         if report.outcome == 'failed':
             failures += 1
-        count += 1
+        total += 1
 
 
 def pytest_sessionfinish(session, exitstatus):
     host = session.config.getoption("--testing_board:host")
     port = session.config.getoption("--testing_board:port")
     game_id = session.config.getoption("--testing_board:game")
-    user_id = session.config.getoption("--testing_board:user")
+    user = session.config.getoption("--testing_board:user")
 
     with closing(http.client.HTTPConnection(host=host, port=port)) as conn:
         headers = {"Content-type": "application/json"}
-        url = '/results/{}/{}'.format(game_id, user_id)
+        url = '/results/{}'.format(game_id)
         results = {
             'results': {
-                'total': count,
+                'user': user,
+                'total': total,
                 'failures': failures,
             }
         }
