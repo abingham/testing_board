@@ -41,7 +41,7 @@ footer =
     Footer.mini []
         { left =
             Footer.left []
-                [ Footer.logo [] [ Footer.html <| text "ACCU 2017 Schedule" ]
+                [ Footer.logo [] [ Footer.html <| text "Testing Leaderboard" ]
                 , Footer.links []
                     [ Footer.linkItem
                         [ Footer.href "https://github.com/abingham/testing-board.git" ]
@@ -53,7 +53,7 @@ footer =
                 [ Footer.links []
                     [ Footer.linkItem
                         [ Footer.href "" ]
-                        [ Footer.html <| text "© 2017 austin@sixty-north.com"
+                        [ Footer.html <| text "© 2017 Sixty North AS"
                         ]
                     ]
                 ]
